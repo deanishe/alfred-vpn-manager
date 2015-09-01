@@ -34,6 +34,9 @@ from workflow import Workflow, ICON_WARNING
 
 log = None
 
+UPDATE_SETTINGS = {
+    'github_slug': 'deanishe/alfred-viscosity'
+}
 
 VPN = namedtuple('VPN', ['name', 'active'])
 
@@ -209,6 +212,6 @@ def main(wf):
 
 
 if __name__ == '__main__':
-    wf = Workflow()
+    wf = Workflow(update_settings=UPDATE_SETTINGS)
     log = wf.logger
     sys.exit(wf.run(main))
