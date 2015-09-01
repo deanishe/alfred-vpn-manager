@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>bundleid</key>
+	<string>net.deanishe.alfred-viscosity</string>
+	<key>connections</key>
+	<dict>
+		<key>2CD984EF-1CE0-4DFD-BC28-7AB81B9C9F38</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>3320B185-EABE-4399-98AB-D93EFA238B86</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+			</dict>
+		</array>
+	</dict>
+	<key>createdby</key>
+	<string>Dean Jackson</string>
+	<key>description</key>
+	<string>Manage VPN Connections from Alfred</string>
+	<key>disabled</key>
+	<false/>
+	<key>name</key>
+	<string>Viscosity</string>
+	<key>objects</key>
+	<array>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argumenttype</key>
+				<integer>1</integer>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>keyword</key>
+				<string>vpn</string>
+				<key>queuedelaycustom</key>
+				<integer>3</integer>
+				<key>queuedelayimmediatelyinitially</key>
+				<true/>
+				<key>queuedelaymode</key>
+				<integer>0</integer>
+				<key>queuemode</key>
+				<integer>1</integer>
+				<key>runningsubtext</key>
+				<string>Loading VPN information…</string>
+				<key>script</key>
+				<string>/usr/bin/python viscosity.py list "{query}"</string>
+				<key>subtext</key>
+				<string>Manage VPN Connections</string>
+				<key>title</key>
+				<string>VPN Connections</string>
+				<key>type</key>
+				<integer>0</integer>
+				<key>withspace</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.scriptfilter</string>
+			<key>uid</key>
+			<string>2CD984EF-1CE0-4DFD-BC28-7AB81B9C9F38</string>
+			<key>version</key>
+			<integer>0</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>0</integer>
+				<key>script</key>
+				<string>/usr/bin/python viscosity.py {query}</string>
+				<key>type</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>3320B185-EABE-4399-98AB-D93EFA238B86</string>
+			<key>version</key>
+			<integer>0</integer>
+		</dict>
+	</array>
+	<key>readme</key>
+	<string>Alfred-Viscosity
+================
+
+Manage your Viscosity VPN connections.
+
+Requires Viscosity app from https://www.sparklabs.com/viscosity/</string>
+	<key>uidata</key>
+	<dict>
+		<key>2CD984EF-1CE0-4DFD-BC28-7AB81B9C9F38</key>
+		<dict>
+			<key>ypos</key>
+			<real>10</real>
+		</dict>
+		<key>3320B185-EABE-4399-98AB-D93EFA238B86</key>
+		<dict>
+			<key>ypos</key>
+			<real>10</real>
+		</dict>
+	</dict>
+	<key>webaddress</key>
+	<string></string>
+</dict>
+</plist>
