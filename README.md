@@ -23,7 +23,7 @@ This workflow is licensed under the [MIT Licence][mit].
 It is based on the [Alfred-Workflow][aw] library (also [MIT-licensed][mit]) and the icons are from [Font Awesome][font-awesome] ([SIL OFL Licence][sil-ofl]).
 
 
-[demo]: ./demo.gif  "Alfred-Viscosity in action"
+[demo]: https://github.com/deanishe/alfred-viscosity/raw/master/demo.gif  "Alfred-Viscosity in action"
 [viscosity]: https://www.sparklabs.com/viscosity/
 [font-awesome]: http://fontawesome.io/
 [alfred]: http://www.alfredapp.com/
