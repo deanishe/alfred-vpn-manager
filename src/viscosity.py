@@ -108,8 +108,8 @@ def do_list(args):
 
     if len(active_connections) > 0:
         connected = True
-
-    connected = False
+    else:
+        connected = False
 
     # ---------------------------------------------------------
     # Display active connections at the top if there's no query
@@ -152,9 +152,9 @@ def do_list(args):
         # Only add UID if there are no connected VPNs
         # to ensure connected VPNs are shown first
         if connected:
-            uid = con.name
-        else:
             uid = None
+        else:
+            uid = con.name
         wf.add_item(
             con.name,
             '↩ to connect',
