@@ -15,6 +15,8 @@
 				<integer>0</integer>
 				<key>modifiersubtext</key>
 				<string></string>
+				<key>vitoclose</key>
+				<false/>
 			</dict>
 		</array>
 	</dict>
@@ -31,6 +33,8 @@
 		<dict>
 			<key>config</key>
 			<dict>
+				<key>alfredfiltersresults</key>
+				<false/>
 				<key>argumenttype</key>
 				<integer>1</integer>
 				<key>escaping</key>
@@ -48,7 +52,11 @@
 				<key>runningsubtext</key>
 				<string>Loading VPN information…</string>
 				<key>script</key>
-				<string>/usr/bin/python viscosity.py list "{query}"</string>
+				<string>/usr/bin/python viscosity.py list "$1"</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
 				<key>subtext</key>
 				<string>Manage VPN Connections</string>
 				<key>title</key>
@@ -63,7 +71,7 @@
 			<key>uid</key>
 			<string>2CD984EF-1CE0-4DFD-BC28-7AB81B9C9F38</string>
 			<key>version</key>
-			<integer>0</integer>
+			<integer>2</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -73,7 +81,11 @@
 				<key>escaping</key>
 				<integer>0</integer>
 				<key>script</key>
-				<string>/usr/bin/python viscosity.py {query}</string>
+				<string>/usr/bin/python viscosity.py $1</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
 				<key>type</key>
 				<integer>0</integer>
 			</dict>
@@ -82,7 +94,7 @@
 			<key>uid</key>
 			<string>3320B185-EABE-4399-98AB-D93EFA238B86</string>
 			<key>version</key>
-			<integer>0</integer>
+			<integer>2</integer>
 		</dict>
 	</array>
 	<key>readme</key>
@@ -96,15 +108,21 @@ Requires Viscosity app from https://www.sparklabs.com/viscosity/</string>
 	<dict>
 		<key>2CD984EF-1CE0-4DFD-BC28-7AB81B9C9F38</key>
 		<dict>
+			<key>xpos</key>
+			<integer>40</integer>
 			<key>ypos</key>
-			<real>10</real>
+			<integer>40</integer>
 		</dict>
 		<key>3320B185-EABE-4399-98AB-D93EFA238B86</key>
 		<dict>
+			<key>xpos</key>
+			<integer>240</integer>
 			<key>ypos</key>
-			<real>10</real>
+			<integer>40</integer>
 		</dict>
 	</dict>
+	<key>version</key>
+	<string>2.0</string>
 	<key>webaddress</key>
 	<string></string>
 </dict>

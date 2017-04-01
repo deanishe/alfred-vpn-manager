@@ -1,12 +1,16 @@
 
-# Alfred-Viscosity #
+Alfred-Viscosity
+================
 
 Manage your [Viscosity][viscosity] VPN connections from [Alfred][alfred].
+
+**Note:** Version 2 requires Alfred 3.
 
 ![Alfred-Viscosity in action][demo]
 
 
-## Usage ##
+Usage
+-----
 
 - `vpn [<query>]` — View and filter Viscosity VPN connections.
     - `↩` — Connect/disconnect selected connection.
@@ -16,7 +20,8 @@ If you haven't entered a query, any active VPN connections will be shown at the 
 If you are connected to multiple VPNs, an additional "Disconnect All" item will be shown first.
 
 
-## Licence & thanks ##
+Licence & thanks
+----------------
 
 This workflow is licensed under the [MIT Licence][mit].
 
