@@ -90,7 +90,7 @@ def _load_connections():
 
 
 def load_connections():
-    """Return list of VPN connections. Cache list for 5 seconds."""
+    """Return list of VPN connections. Cache list for session."""
     return wf.cached_data('connections', _load_connections, max_age=0,
                           session=True)
 
