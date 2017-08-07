@@ -91,6 +91,7 @@ def _load_connections():
 
 def load_connections():
     """Return list of VPN connections. Cache list for session."""
+    wf.clear_session_cache()
     return wf.cached_data('connections', _load_connections, max_age=0,
                           session=True)
 
