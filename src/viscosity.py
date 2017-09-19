@@ -24,10 +24,12 @@ Options:
 from __future__ import print_function, absolute_import
 
 from collections import namedtuple
+from contextlib import contextmanager
 from operator import attrgetter
 import pipes
 import subprocess
 import sys
+from time import time
 
 import docopt
 from workflow import Workflow3, ICON_WARNING
@@ -42,6 +44,15 @@ UPDATE_SETTINGS = {
 VPN = namedtuple('VPN', ['name', 'active'])
 
 
+@contextmanager
+def timed(name=None):
+    """Context manager that logs execution time."""
+    name = name or ''
+    start_time = time()
+    yield
+    log.debug('[%0.2fs] %s', time() - start_time, name)
+
+
 def run_script(script_name, *args):
     """Return output of script `script_name`.
 
@@ -49,17 +60,19 @@ def run_script(script_name, *args):
     have extension `.scpt`.
 
     """
-    script = wf.workflowfile('scripts/{0}.scpt'.format(script_name))
-    cmd = ['/usr/bin/osascript', script.encode('utf-8')]
-    cmd += [a.encode('utf-8') for a in args]
-    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE)
-    proc.wait()
-    if proc.returncode != 0:
-        raise RuntimeError('Script `{0}` returned {1}'.format(
-                           script, proc.returncode))
-    output = wf.decode(proc.stdout.read())
-    log.debug('Script : %r', script)
-    log.debug('Output : %r', output)
+    with timed('ran script ' + script_name):
+        script = wf.workflowfile('scripts/{0}.scpt'.format(script_name))
+        cmd = ['/usr/bin/osascript', script.encode('utf-8')]
+        cmd += [a.encode('utf-8') for a in args]
+        proc = subprocess.Popen(cmd, stdout=subprocess.PIPE)
+        proc.wait()
+        if proc.returncode != 0:
+            raise RuntimeError('Script `{0}` returned {1}'.format(
+                               script, proc.returncode))
+        output = wf.decode(proc.stdout.read())
+        # log.debug('Script : %r', script)
+        # log.debug('Output : %r', output)
+
     return output
 
 
@@ -69,22 +82,24 @@ def _load_connections():
     Returns a list of VPN tuples.
 
     """
-    connections = []
-    output = run_script('get_connections').strip()
-    for line in output.split('\n'):
-        if '\t' not in line:
-            log.warning('Bad line : %r', line)
-            continue
-        name, status = line.split('\t')
-        if status == 'Connected':
-            status = True
-        else:
-            status = False
-        vpn = VPN(name, status)
-        connections.append(vpn)
-        log.info(vpn)
+    with timed('loaded connections from Viscosity'):
+        connections = []
+        output = run_script('get_connections').strip()
+        for line in output.split('\n'):
+            if '\t' not in line:
+                log.warning('Bad line : %r', line)
+                continue
+            name, status = line.split('\t')
+            if status == 'Connected':
+                status = True
+            else:
+                status = False
+            vpn = VPN(name, status)
+            connections.append(vpn)
+            # log.info(vpn)
 
-    connections.sort(key=attrgetter('name'))
+        connections.sort(key=attrgetter('name'))
+        log.debug('%d total connection(s)', len(connections))
 
     return connections
 
@@ -143,8 +158,9 @@ def do_list(args):
     # ---------------------------------------------------------
     # Filter inactive connections
     if query:
-        connections = wf.filter(query, connections, attrgetter('name'),
-                                min_score=30)
+        with timed('filtered connections'):
+            connections = wf.filter(query, connections, attrgetter('name'),
+                                    min_score=30)
 
     if not connections:
         wf.add_item('No matching connections.',
@@ -189,7 +205,7 @@ def do_connect(args):
     name = args.get('<name>')
     connections = filter_connections(False, name)
     for con in connections:
-        log.debug(u'Connecting `%s` ...', con.name)
+        log.debug(u'connecting "%s" ...', con.name)
         run_script('connect_vpn', con.name)
 
 
@@ -198,7 +214,7 @@ def do_disconnect(args):
     name = args.get('<name>')
     connections = filter_connections(True, name)
     for con in connections:
-        log.debug(u'Disconnecting `%s` ...', con.name)
+        log.debug(u'disconnecting "%s" ...', con.name)
         run_script('disconnect_vpn', con.name)
 
 

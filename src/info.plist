@@ -35,6 +35,8 @@
 			<dict>
 				<key>alfredfiltersresults</key>
 				<false/>
+				<key>alfredfiltersresultsmatchmode</key>
+				<integer>0</integer>
 				<key>argumenttrimmode</key>
 				<integer>0</integer>
 				<key>argumenttype</key>
@@ -124,7 +126,7 @@ Requires Viscosity app from https://www.sparklabs.com/viscosity/</string>
 		</dict>
 	</dict>
 	<key>version</key>
-	<string>2.0.2</string>
+	<string>2.1</string>
 	<key>webaddress</key>
 	<string></string>
 </dict>
