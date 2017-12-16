@@ -56,7 +56,7 @@
 				<key>runningsubtext</key>
 				<string>Loading VPN information…</string>
 				<key>script</key>
-				<string>/usr/bin/python viscosity.py list "$1"</string>
+				<string>/usr/bin/python vpn.py list "$1"</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
@@ -85,9 +85,9 @@
 				<key>escaping</key>
 				<integer>0</integer>
 				<key>script</key>
-				<string>/usr/bin/python viscosity.py {query}</string>
+				<string>/usr/bin/python vpn.py $action "$1"</string>
 				<key>scriptargtype</key>
-				<integer>0</integer>
+				<integer>1</integer>
 				<key>scriptfile</key>
 				<string></string>
 				<key>type</key>
@@ -112,21 +112,30 @@ Requires Viscosity app from https://www.sparklabs.com/viscosity/</string>
 	<dict>
 		<key>2CD984EF-1CE0-4DFD-BC28-7AB81B9C9F38</key>
 		<dict>
+			<key>note</key>
+			<string>Filter list of available VPNs</string>
 			<key>xpos</key>
-			<integer>40</integer>
+			<integer>60</integer>
 			<key>ypos</key>
-			<integer>40</integer>
+			<integer>50</integer>
 		</dict>
 		<key>3320B185-EABE-4399-98AB-D93EFA238B86</key>
 		<dict>
+			<key>note</key>
+			<string>Connect/disconnect VPN</string>
 			<key>xpos</key>
-			<integer>240</integer>
+			<integer>280</integer>
 			<key>ypos</key>
-			<integer>40</integer>
+			<integer>50</integer>
 		</dict>
 	</dict>
+	<key>variables</key>
+	<dict>
+		<key>VPN_APP</key>
+		<string>Tunnelblick</string>
+	</dict>
 	<key>version</key>
-	<string>2.1</string>
+	<string>2.2</string>
 	<key>webaddress</key>
 	<string></string>
 </dict>
