@@ -14,6 +14,7 @@ Usage:
     vpn.py list [<query>]
     vpn.py connect [-a|--all] [<name>]
     vpn.py disconnect [-a|--all] [<name>]
+    vpn.py conf [<query>]
     vpn.py -h
 
 Options:
@@ -28,22 +29,49 @@ from collections import namedtuple
 from contextlib import contextmanager
 import json
 import os
-from operator import attrgetter
-import subprocess
+from operator import attrgetter, itemgetter
 import sys
 from time import time
 
 import docopt
-from workflow import Workflow3, ICON_WARNING
+from workflow import Workflow3, ICON_WARNING, ICON_WEB
+from workflow.util import appinfo, run_command
 
 log = None
 
-ICON_UPDATE = 'update-available.png'
+ICON_CONNECTED = 'icons/connected.png'
+ICON_DISCONNECTED = 'icons/disconnected.png'
+ICON_DOCS = 'icons/docs.png'
+ICON_HELP = 'icons/help.png'
+ICON_ISSUE = 'icons/issue.png'
+ICON_UPDATE_AVAILABLE = 'icons/update-available.png'
+ICON_UPDATE_OK = 'icons/update-ok.png'
+
+DOCS_URL = 'https://github.com/deanishe/alfred-viscosity/blob/master/README.md'
+FORUM_URL = ('https://www.alfredforum.com/topic/'
+             '7333-viscosity-vpn-connection-manager/')
+ISSUES_URL = 'https://github.com/deanishe/alfred-viscosity/issues'
+
 UPDATE_SETTINGS = {
     'github_slug': 'deanishe/alfred-viscosity'
 }
 
+# VPN configuration
 VPN = namedtuple('VPN', ['name', 'active'])
+
+
+# dP                dP
+# 88                88
+# 88d888b. .d8888b. 88 88d888b. .d8888b. 88d888b. .d8888b.
+# 88'  `88 88ooood8 88 88'  `88 88ooood8 88'  `88 Y8ooooo.
+# 88    88 88.  ... 88 88.  .88 88.  ... 88             88
+# dP    dP `88888P' dP 88Y888P' `88888P' dP       `88888P'
+#                      88
+#                      dP
+
+
+class NotInstalled(Exception):
+    """Raised if an application is not installed."""
 
 
 @contextmanager
@@ -55,14 +83,56 @@ def timed(name=None):
     log.debug('[%0.2fs] %s', time() - start_time, name)
 
 
+# dP   .dP 88d888b. 88d888b.    .d8888b. 88d888b. 88d888b. .d8888b.
+# 88   d8' 88'  `88 88'  `88    88'  `88 88'  `88 88'  `88 Y8ooooo.
+# 88 .88'  88.  .88 88    88    88.  .88 88.  .88 88.  .88       88
+# 8888P'   88Y888P' dP    dP    `88888P8 88Y888P' 88Y888P' `88888P'
+#          88                            88       88
+#          dP                            dP       dP
+
 class VPNApp(object):
     """Base class for application classes."""
 
     __metaclass__ = abc.ABCMeta
 
+    def __init__(self):
+        self._info = False
+
+    @abc.abstractproperty
+    def program(self):
+        """Command to call to manipulate application."""
+
+    @abc.abstractproperty
+    def download_url(self):
+        """URL to get application."""
+        return
+
     @abc.abstractproperty
     def connections(self):
+        """All VPN connections."""
         return
+
+    @property
+    def info(self):
+        """Return application info or `None` if not installed."""
+        if self._info is False:
+            self._info = appinfo(self.name)
+        return self._info
+
+    @property
+    def installed(self):
+        """Return `True` if application is installed."""
+        return self.info is not None
+
+    @property
+    def selected(self):
+        """Return `True` if this is the currently configured app."""
+        return os.getenv('VPN_APP') == self.name
+
+    @property
+    def name(self):
+        """Name of application."""
+        return self.__class__.__name__
 
     def connect(self, name):
         """Connect to named VPN."""
@@ -71,7 +141,7 @@ class VPNApp(object):
             log.info(u'connecting "%s" ...', c.name)
 
             cmd = self.program + ['connect', c.name]
-            run_command(*cmd)
+            run_command(cmd)
 
     def disconnect(self, name):
         """Disconnect from named VPN."""
@@ -80,12 +150,13 @@ class VPNApp(object):
             log.info(u'disconnecting "%s" ...', c.name)
 
             cmd = self.program + ['disconnect', c.name]
-            run_command(*cmd)
+            run_command(cmd)
 
-    @abc.abstractmethod
     def disconnect_all(self):
-        """Disconnect all connected VPNs."""
-        return
+        """Disconnect from all VPNs."""
+        connections = self.filter_connections(active=True)
+        for c in connections:
+            self.disconnect(c.name)
 
     def filter_connections(self, name=None, active=True):
         """Return connections with matching name and state."""
@@ -103,9 +174,16 @@ class VPNApp(object):
 class Viscosity(VPNApp):
     """Interface to Viscosity.app."""
 
-    def __init__(self):
-        self.program = ['/usr/bin/osascript', '-l', 'JavaScript',
-                        wf.workflowfile('viscosity.js')]
+    @property
+    def program(self):
+        """Command for viscosity.js script."""
+        return ['/usr/bin/osascript', '-l', 'JavaScript',
+                wf.workflowfile('viscosity.js')]
+
+    @property
+    def download_url(self):
+        """URL to get application."""
+        return 'https://www.sparklabs.com/viscosity/'
 
     @property
     def connections(self):
@@ -117,32 +195,30 @@ class Viscosity(VPNApp):
     def _fetch_connections(self):
         """Get configurations from VPN app."""
         connections = []
-        with timed('fetched VPN connections'):
+        with timed('fetched Viscosity VPN connections'):
             cmd = self.program + ['list']
 
-            data = json.loads(run_command(*cmd))
+            data = json.loads(run_command(cmd))
 
             for t in data.items():
                 connections.append(VPN(*t))
 
         return connections
 
-    def disconnect_all(self):
-        """Disconnect from all VPNs."""
-        connections = self.filter_connections(active=True)
-        for c in connections:
-            log.info(u'disconnecting "%s" ...', c.name)
-
-            cmd = self.program + ['disconnect', c.name]
-            run_command(*cmd)
-
 
 class Tunnelblick(VPNApp):
     """Interface to Tunnelblick.app."""
 
-    def __init__(self):
-        self.program = ['/usr/bin/osascript',
-                        wf.workflowfile('tunnelblick.applescript')]
+    @property
+    def program(self):
+        """Command for tunnelblick.applescript."""
+        return ['/usr/bin/osascript',
+                wf.workflowfile('tunnelblick.applescript')]
+
+    @property
+    def download_url(self):
+        """URL to get application."""
+        return 'https://tunnelblick.net'
 
     @property
     def connections(self):
@@ -154,10 +230,10 @@ class Tunnelblick(VPNApp):
     def _fetch_connections(self):
         """Get configurations from VPN app."""
         connections = []
-        with timed('fetched VPN connections'):
+        with timed('fetched Tunnelblick VPN connections'):
             cmd = self.program + ['list']
 
-            output = wf.decode(run_command(*cmd)).strip()
+            output = wf.decode(run_command(cmd)).strip()
 
             for line in output.split('\n'):
                 active = True if line[0] == '1' else False
@@ -169,32 +245,183 @@ class Tunnelblick(VPNApp):
     def disconnect_all(self):
         """Close all active VPNs."""
         cmd = self.program + ['disconnect-all']
-        run_command(*cmd)
+        run_command(cmd)
 
 
-def run_command(*args):
-    """Run command and return output."""
-    cmd = [s.encode('utf-8') for s in args]
-    log.debug('cmd=%r', cmd)
-    return subprocess.check_output(cmd)
+# class Dummy(VPNApp):
+#     """Do-nothing application for testing."""
+
+#     @property
+#     def program(self):
+#         return ['/usr/bin/true']
+
+#     @property
+#     def download_url(self):
+#         return 'https://www.google.com'
+
+#     @property
+#     def connections(self):
+#         return []
 
 
 def get_app():
-    """Return application object for selected app."""
+    """Return application object for currently-selected app."""
     name = os.getenv('VPN_APP') or 'Viscosity'
 
     for cls in VPNApp.__subclasses__():
         if cls.__name__ == name:
-            return cls()
+            app = cls()
+            if not app.installed:
+                raise NotInstalled('Application "{}" is not installed'
+                                   .format(app.name))
+
+            return app
 
     raise ValueError('Unknown VPN app: ' + name)
 
 
+def get_all_apps():
+    """Return all application objects."""
+    apps = []
+    for cls in VPNApp.__subclasses__():
+        apps.append(cls())
+
+    apps.sort(key=attrgetter('name'))
+    return apps
+
+
+#                            .8888b oo
+#                            88   "
+# .d8888b. .d8888b. 88d888b. 88aaa  dP .d8888b.
+# 88'  `"" 88'  `88 88'  `88 88     88 88'  `88
+# 88.  ... 88.  .88 88    88 88     88 88.  .88
+# `88888P' `88888P' dP    dP dP     dP `8888P88
+#                                           .88
+#                                       d8888P
+
+def show_update():
+    """Add an 'update available!' item."""
+    if wf.update_available:
+        wf.add_item('Workflow Update Available!',
+                    u'↩ or ⇥ to install update',
+                    autocomplete='workflow:update',
+                    valid=False,
+                    icon=ICON_UPDATE_AVAILABLE)
+        return True
+
+    return False
+
+
+def do_config(query):
+    """Show workflow configuration."""
+    items = []
+
+    # ------------------------------------------------------
+    # Update status
+    title = 'Workflow Is up to Date'
+    icon = ICON_UPDATE_OK
+    if wf.update_available:
+        title = 'Workflow Update Available!'
+        icon = ICON_UPDATE_AVAILABLE
+
+    items.append(dict(
+        title=title,
+        subtitle=u'↩ or ⇥ to install update',
+        autocomplete='workflow:update',
+        valid=False,
+        icon=icon,
+    ))
+
+    # ------------------------------------------------------
+    # VPN apps
+    for app in get_all_apps():
+        if app.selected:
+            items.append(dict(
+                title=u'{} (active)'.format(app.name),
+                subtitle=u'{} is the active application'.format(app.name),
+                icon=app.info.path,
+                icontype='fileicon',
+                valid=False,
+            ))
+        else:
+            if app.installed:
+                items.append(dict(
+                    title=u'{}'.format(app.name),
+                    subtitle=u'↩ to use {}'.format(app.name),
+                    icon=app.info.path,
+                    icontype='fileicon',
+                    arg='app:' + app.name,
+                    valid=True,
+                ))
+            else:
+                items.append(dict(
+                    title=u'{} (not installed)'.format(app.name),
+                    subtitle=u'↩ to get {}'.format(app.name),
+                    icon=ICON_WEB,
+                    arg=app.download_url,
+                    valid=True,
+                ))
+
+    # ------------------------------------------------------
+    # URLs
+    items.append(dict(
+        title='Online Docs',
+        subtitle='Open workflow docs in your browser',
+        arg=DOCS_URL,
+        valid=True,
+        icon=ICON_DOCS,
+    ))
+
+    items.append(dict(
+        title='Get Help',
+        subtitle='Open AlfredForum.com thread in your browser',
+        arg=FORUM_URL,
+        valid=True,
+        icon=ICON_HELP,
+    ))
+
+    items.append(dict(
+        title='Report Problem',
+        subtitle='Open GitHub issues in your browser',
+        arg=ISSUES_URL,
+        valid=True,
+        icon=ICON_ISSUE,
+    ))
+
+    # ------------------------------------------------------
+    # Filter and display results
+    if query:
+        items = wf.filter(query, items, itemgetter('title'),
+                          min_score=30)
+
+    if not items:
+        wf.add_item('No Matches', 'Try a different query?',
+                    icon=ICON_WARNING)
+
+    for item in items:
+        wf.add_item(**item)
+
+    wf.send_feedback()
+
+
+#                                                         dP
+#                                                         88
+# .d8888b. .d8888b. 88d888b. 88d888b. .d8888b. .d8888b. d8888P
+# 88'  `"" 88'  `88 88'  `88 88'  `88 88ooood8 88'  `""   88
+# 88.  ... 88.  .88 88    88 88    88 88.  ... 88.  ...   88
+# `88888P' `88888P' dP    dP dP    dP `88888P' `88888P'   dP
+
 def do_list(query):
     """Show/filter list of VPN connections."""
-    ICON_UNLOCKED = wf.workflowfile('unlocked.png')
-
-    app = get_app()
+    try:
+        app = get_app()
+    except NotInstalled as err:
+        wf.add_item(err.message,
+                    'Use "vpnconf" to change the application',
+                    valid=False,
+                    icon=ICON_WARNING)
+        wf.send_feedback()
+        return
 
     connections = app.connections
 
@@ -210,13 +437,7 @@ def do_list(query):
     nouids = False
     if not query:
 
-        if wf.update_available:
-            nouids = True
-            wf.add_item('Update available!',
-                        'Action this item to update the workflow',
-                        autocomplete='workflow:update',
-                        valid=False,
-                        icon=ICON_UPDATE)
+        nouids = show_update()
 
         if len(active_connections) > 1:
             it = wf.add_item(
@@ -224,6 +445,7 @@ def do_list(query):
                 'Action this item to close all connections',
                 arg='--all',
                 valid=True,
+                icon=ICON_CONNECTED,
             )
             it.setvar('action', 'disconnect')
 
@@ -233,6 +455,7 @@ def do_list(query):
                 '↩ to disconnect',
                 arg=con.name,
                 valid=True,
+                icon=ICON_CONNECTED,
             )
             it.setvar('action', 'disconnect')
 
@@ -266,7 +489,7 @@ def do_list(query):
             uid=uid,
             arg=con.name,
             valid=True,
-            icon=ICON_UNLOCKED,
+            icon=ICON_DISCONNECTED,
         )
         it.setvar('action', 'connect')
 
@@ -285,6 +508,13 @@ def do_disconnect(name):
     app.disconnect(name)
 
 
+#          dP oo
+#          88
+# .d8888b. 88 dP
+# 88'  `"" 88 88
+# 88.  ... 88 88
+# `88888P' dP dP
+
 def main(wf):
     """Run workflow."""
     args = docopt.docopt(__doc__, wf.args, version=wf.version)
@@ -299,6 +529,10 @@ def main(wf):
 
     elif args['disconnect']:
         return do_disconnect(args.get('<name>'))
+
+    elif args['conf']:
+        return do_config(args.get('<query>'))
+
     else:
         raise ValueError('unknown action')
 

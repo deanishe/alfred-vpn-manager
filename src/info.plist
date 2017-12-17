@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>bundleid</key>
-	<string>net.deanishe.alfred-viscosity</string>
+	<string>net.deanishe.alfred.vpn.manager</string>
 	<key>connections</key>
 	<dict>
 		<key>2CD984EF-1CE0-4DFD-BC28-7AB81B9C9F38</key>
@@ -11,6 +11,68 @@
 			<dict>
 				<key>destinationuid</key>
 				<string>3320B185-EABE-4399-98AB-D93EFA238B86</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>8BD0909C-70CA-44EC-BC40-1AAE4D5924D2</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>E31A93B7-40D3-4DF1-AD3D-0FAFE635B7F7</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>A6188BC8-38BD-424B-8976-C0B9763C5C3F</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>E4BFC069-A39C-4776-9DA8-546B7F8DB78F</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>B84012A0-E647-44DC-BC60-07B2E545ECDA</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>8BD0909C-70CA-44EC-BC40-1AAE4D5924D2</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>A6188BC8-38BD-424B-8976-C0B9763C5C3F</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>E4BFC069-A39C-4776-9DA8-546B7F8DB78F</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>F216B61E-ED5A-49CE-BDB4-1C81A21588B0</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -27,9 +89,32 @@
 	<key>disabled</key>
 	<false/>
 	<key>name</key>
-	<string>Viscosity</string>
+	<string>VPN Manager</string>
 	<key>objects</key>
 	<array>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>0</integer>
+				<key>script</key>
+				<string>/usr/bin/python vpn.py $action "$1"</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>3320B185-EABE-4399-98AB-D93EFA238B86</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
 		<dict>
 			<key>config</key>
 			<dict>
@@ -56,7 +141,7 @@
 				<key>runningsubtext</key>
 				<string>Loading VPN information…</string>
 				<key>script</key>
-				<string>/usr/bin/python vpn.py list "$1"</string>
+				<string>./vpn.py list "$1"</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
@@ -80,34 +165,165 @@
 		<dict>
 			<key>config</key>
 			<dict>
+				<key>alfredfiltersresults</key>
+				<false/>
+				<key>alfredfiltersresultsmatchmode</key>
+				<integer>0</integer>
+				<key>argumenttrimmode</key>
+				<integer>0</integer>
+				<key>argumenttype</key>
+				<integer>1</integer>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>keyword</key>
+				<string>vpnconf</string>
+				<key>queuedelaycustom</key>
+				<integer>3</integer>
+				<key>queuedelayimmediatelyinitially</key>
+				<true/>
+				<key>queuedelaymode</key>
+				<integer>0</integer>
+				<key>queuemode</key>
+				<integer>1</integer>
+				<key>runningsubtext</key>
+				<string>Loading apps…</string>
+				<key>script</key>
+				<string>./vpn.py conf "$1"</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>subtext</key>
+				<string>Choose your VPN client</string>
+				<key>title</key>
+				<string>VPN Configuration</string>
+				<key>type</key>
+				<integer>0</integer>
+				<key>withspace</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.scriptfilter</string>
+			<key>uid</key>
+			<string>B84012A0-E647-44DC-BC60-07B2E545ECDA</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>browser</key>
+				<string></string>
+				<key>spaces</key>
+				<string></string>
+				<key>url</key>
+				<string>{query}</string>
+				<key>utf8</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.openurl</string>
+			<key>uid</key>
+			<string>E31A93B7-40D3-4DF1-AD3D-0FAFE635B7F7</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>inputstring</key>
+				<string>{query}</string>
+				<key>matchcasesensitive</key>
+				<false/>
+				<key>matchmode</key>
+				<integer>2</integer>
+				<key>matchstring</key>
+				<string>^https?://.+</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.filter</string>
+			<key>uid</key>
+			<string>8BD0909C-70CA-44EC-BC40-1AAE4D5924D2</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>lastpathcomponent</key>
+				<false/>
+				<key>onlyshowifquerypopulated</key>
+				<false/>
+				<key>removeextension</key>
+				<false/>
+				<key>text</key>
+				<string>Using {query}</string>
+				<key>title</key>
+				<string>Changed VPN Application</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.notification</string>
+			<key>uid</key>
+			<string>F216B61E-ED5A-49CE-BDB4-1C81A21588B0</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
 				<key>concurrently</key>
 				<false/>
 				<key>escaping</key>
-				<integer>0</integer>
+				<integer>102</integer>
 				<key>script</key>
-				<string>/usr/bin/python vpn.py $action "$1"</string>
+				<string>query="$1"
+app=$( echo "$query" | cut -d: -f2 )
+
+/usr/libexec/PlistBuddy -c "Set :variables:VPN_APP \"$app\"" info.plist
+
+echo "$app"</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
 				<string></string>
 				<key>type</key>
-				<integer>0</integer>
+				<integer>5</integer>
 			</dict>
 			<key>type</key>
 			<string>alfred.workflow.action.script</string>
 			<key>uid</key>
-			<string>3320B185-EABE-4399-98AB-D93EFA238B86</string>
+			<string>E4BFC069-A39C-4776-9DA8-546B7F8DB78F</string>
 			<key>version</key>
 			<integer>2</integer>
 		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>inputstring</key>
+				<string>{query}</string>
+				<key>matchcasesensitive</key>
+				<false/>
+				<key>matchmode</key>
+				<integer>2</integer>
+				<key>matchstring</key>
+				<string>^app:.+</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.filter</string>
+			<key>uid</key>
+			<string>A6188BC8-38BD-424B-8976-C0B9763C5C3F</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
 	</array>
 	<key>readme</key>
-	<string>Alfred-Viscosity
-================
+	<string>Alfred-VPN Manager
+==================
 
-Manage your Viscosity VPN connections.
+Manage your Tunnelblick or Viscosity VPN connections.
 
-Requires Viscosity app from https://www.sparklabs.com/viscosity/</string>
+Requires Viscosity app from https://www.sparklabs.com/viscosity/
+or Tunnelblick app from https://tunnelblick.net/</string>
 	<key>uidata</key>
 	<dict>
 		<key>2CD984EF-1CE0-4DFD-BC28-7AB81B9C9F38</key>
@@ -115,7 +331,7 @@ Requires Viscosity app from https://www.sparklabs.com/viscosity/</string>
 			<key>note</key>
 			<string>Filter list of available VPNs</string>
 			<key>xpos</key>
-			<integer>60</integer>
+			<integer>260</integer>
 			<key>ypos</key>
 			<integer>50</integer>
 		</dict>
@@ -124,19 +340,69 @@ Requires Viscosity app from https://www.sparklabs.com/viscosity/</string>
 			<key>note</key>
 			<string>Connect/disconnect VPN</string>
 			<key>xpos</key>
-			<integer>280</integer>
+			<integer>480</integer>
 			<key>ypos</key>
 			<integer>50</integer>
+		</dict>
+		<key>8BD0909C-70CA-44EC-BC40-1AAE4D5924D2</key>
+		<dict>
+			<key>note</key>
+			<string>{query} is a URL</string>
+			<key>xpos</key>
+			<integer>520</integer>
+			<key>ypos</key>
+			<integer>270</integer>
+		</dict>
+		<key>A6188BC8-38BD-424B-8976-C0B9763C5C3F</key>
+		<dict>
+			<key>note</key>
+			<string>{query} is an application</string>
+			<key>xpos</key>
+			<integer>520</integer>
+			<key>ypos</key>
+			<integer>430</integer>
+		</dict>
+		<key>B84012A0-E647-44DC-BC60-07B2E545ECDA</key>
+		<dict>
+			<key>note</key>
+			<string>Workflow configuration</string>
+			<key>xpos</key>
+			<integer>260</integer>
+			<key>ypos</key>
+			<integer>240</integer>
+		</dict>
+		<key>E31A93B7-40D3-4DF1-AD3D-0FAFE635B7F7</key>
+		<dict>
+			<key>xpos</key>
+			<integer>650</integer>
+			<key>ypos</key>
+			<integer>240</integer>
+		</dict>
+		<key>E4BFC069-A39C-4776-9DA8-546B7F8DB78F</key>
+		<dict>
+			<key>note</key>
+			<string>Change VPN application</string>
+			<key>xpos</key>
+			<integer>650</integer>
+			<key>ypos</key>
+			<integer>400</integer>
+		</dict>
+		<key>F216B61E-ED5A-49CE-BDB4-1C81A21588B0</key>
+		<dict>
+			<key>xpos</key>
+			<integer>820</integer>
+			<key>ypos</key>
+			<integer>400</integer>
 		</dict>
 	</dict>
 	<key>variables</key>
 	<dict>
 		<key>VPN_APP</key>
-		<string>Tunnelblick</string>
+		<string>Viscosity</string>
 	</dict>
 	<key>version</key>
-	<string>2.2</string>
+	<string>3.0</string>
 	<key>webaddress</key>
-	<string></string>
+	<string>https://github.com/deanishe/alfred-vpn-manager</string>
 </dict>
 </plist>
