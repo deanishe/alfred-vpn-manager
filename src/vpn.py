@@ -117,6 +117,7 @@ class VPNApp(object):
         """Return application info or `None` if not installed."""
         if self._info is False:
             self._info = appinfo(self.name)
+            log.debug('appinfo=%r', self._info)
         return self._info
 
     @property
