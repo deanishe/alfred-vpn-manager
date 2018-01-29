@@ -401,7 +401,7 @@ or Tunnelblick app from https://tunnelblick.net/</string>
 		<string>Viscosity</string>
 	</dict>
 	<key>version</key>
-	<string>3.0.1</string>
+	<string>3.0.2</string>
 	<key>webaddress</key>
 	<string>https://github.com/deanishe/alfred-vpn-manager</string>
 </dict>

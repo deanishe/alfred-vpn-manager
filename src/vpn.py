@@ -117,7 +117,7 @@ class VPNApp(object):
         """Return application info or `None` if not installed."""
         if self._info is False:
             self._info = appinfo(self.name)
-            log.debug('appinfo=%r', self._info)
+            log.debug('[%s] appinfo=%r', self.name, self._info)
         return self._info
 
     @property
@@ -336,7 +336,7 @@ def do_config(query):
     # ------------------------------------------------------
     # VPN apps
     for app in get_all_apps():
-        if app.selected:
+        if app.selected and app.installed:
             items.append(dict(
                 title=u'{} (active)'.format(app.name),
                 subtitle=u'{} is the active application'.format(app.name),

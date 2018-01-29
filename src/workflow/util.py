@@ -96,6 +96,7 @@ def utf8ify(s):
 
     Returns:
         str: UTF-8 string or string representation of s.
+
     """
     if isinstance(s, str):
         return s
@@ -124,6 +125,7 @@ def applescriptify(s):
 
     Returns:
         unicode: Escaped string
+
     """
     return s.replace(u'"', u'" & quote & "')
 
@@ -142,6 +144,7 @@ def run_command(cmd, **kwargs):
 
     Returns:
         str: Output returned by ``check_output``.
+
     """
     cmd = [utf8ify(s) for s in cmd]
     return subprocess.check_output(cmd, **kwargs)
@@ -190,6 +193,7 @@ def run_jxa(script, *args):
 
     Returns:
         str: Output of script.
+
     """
     return run_applescript(script, *args, lang='JavaScript')
 
@@ -206,6 +210,7 @@ def run_trigger(name, bundleid=None, arg=None):
         name (str): Name of External Trigger to call.
         bundleid (str, optional): Bundle ID of workflow trigger belongs to.
         arg (str, optional): Argument to pass to trigger.
+
     """
     if not bundleid:
         bundleid = os.getenv('alfred_workflow_bundleid')
@@ -231,6 +236,7 @@ def appinfo(name):
 
     Returns:
         AppInfo: :class:`AppInfo` tuple or ``None`` if app isn't found.
+
     """
     cmd = ['mdfind', '-onlyin', '/',
            '(kMDItemContentTypeTree == com.apple.application &&'
