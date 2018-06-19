@@ -24,10 +24,10 @@ Contents
 
 <a name="installation"></a>
 Installation
------
+------------
 
-- download the newest `*.workflow` file from https://github.com/deanishe/alfred-vpn-manager/releases/
-- double-click the file to import it into Alfred.
+Download the `VPN-Manager-X.X.X.alfred3workflow` file from [GitHub releases][download] and double-click the file to import it into Alfred.
+
 
 <a name="usage"></a>
 Usage
@@ -102,6 +102,7 @@ It is based on the [Alfred-Workflow][aw] library (also [MIT-licensed][mit]) and 
 [alfred]: http://www.alfredapp.com/
 [forum]: https://www.alfredforum.com/
 [forum-thread]: https://www.alfredforum.com/topic/7333-viscosity-vpn-connection-manager/
+[download]: https://github.com/deanishe/alfred-vpn-manager/releases/latest
 [aw]: http://www.deanishe.net/alfred-workflow/
 [mit]: http://opensource.org/licenses/MIT
 [openvpn]: https://openvpn.net/
