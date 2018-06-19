@@ -13,6 +13,7 @@ Contents
 
 <!-- MarkdownTOC autolink="true" bracket="round" depth="3" autoanchor="true" -->
 
+- [Installation](#installation)
 - [Usage](#usage)
 - [Supported apps](#supported-apps)
 - [What's a VPN for, anyway?](#whats-a-vpn-for-anyway)
@@ -20,6 +21,13 @@ Contents
 - [Licence & thanks](#licence--thanks)
 
 <!-- /MarkdownTOC -->
+
+<a name="installation"></a>
+Installation
+-----
+
+- download the newest `*.workflow` file from https://github.com/deanishe/alfred-vpn-manager/releases/
+- double-click the file to import it into Alfred.
 
 <a name="usage"></a>
 Usage
