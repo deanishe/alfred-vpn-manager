@@ -96,6 +96,7 @@ class VPNApp(object):
     __metaclass__ = abc.ABCMeta
 
     def __init__(self):
+        """Create new initialised `VPNApp`."""
         self._info = False
 
     @abc.abstractproperty
