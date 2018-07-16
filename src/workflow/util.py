@@ -32,6 +32,20 @@ run trigger "{name}" in workflow "{bundleid}" {arg}
 end tell
 """
 
+# AppleScript to save a variable in info.plist
+AS_CONFIG_SET = """
+tell application "Alfred 3"
+set configuration "{name}" to value "{value}" in workflow "{bundleid}" {export}
+end tell
+"""
+
+# AppleScript to remove a variable from info.plist
+AS_CONFIG_UNSET = """
+tell application "Alfred 3"
+remove configuration "{name}" in workflow "{bundleid}"
+end tell
+"""
+
 
 class AcquisitionError(Exception):
     """Raised if a lock cannot be acquired."""
@@ -53,6 +67,7 @@ Returned by :func:`appinfo`. All attributes are Unicode.
 .. py:attribute:: bundleid
 
     Application's bundle ID, e.g. ``u'com.apple.Safari'``.
+
 """
 
 
@@ -226,6 +241,58 @@ def run_trigger(name, bundleid=None, arg=None):
     run_applescript(script)
 
 
+def set_config(name, value, bundleid=None, exportable=False):
+    """Set a workflow variable in ``info.plist``.
+
+    .. versionadded:: 1.33
+
+    Args:
+        name (str): Name of variable to set.
+        value (str): Value to set variable to.
+        bundleid (str, optional): Bundle ID of workflow variable belongs to.
+        exportable (bool, optional): Whether variable should be marked
+            as exportable (Don't Export checkbox).
+
+    """
+    if not bundleid:
+        bundleid = os.getenv('alfred_workflow_bundleid')
+
+    name = applescriptify(name)
+    value = applescriptify(value)
+    bundleid = applescriptify(bundleid)
+
+    if exportable:
+        export = 'exportable true'
+    else:
+        export = 'exportable false'
+
+    script = AS_CONFIG_SET.format(name=name, bundleid=bundleid,
+                                  value=value, export=export)
+
+    run_applescript(script)
+
+
+def unset_config(name, bundleid=None):
+    """Delete a workflow variable from ``info.plist``.
+
+    .. versionadded:: 1.33
+
+    Args:
+        name (str): Name of variable to delete.
+        bundleid (str, optional): Bundle ID of workflow variable belongs to.
+
+    """
+    if not bundleid:
+        bundleid = os.getenv('alfred_workflow_bundleid')
+
+    name = applescriptify(name)
+    bundleid = applescriptify(bundleid)
+
+    script = AS_CONFIG_UNSET.format(name=name, bundleid=bundleid)
+
+    run_applescript(script)
+
+
 def appinfo(name):
     """Get information about an installed application.
 
@@ -238,14 +305,17 @@ def appinfo(name):
         AppInfo: :class:`AppInfo` tuple or ``None`` if app isn't found.
 
     """
-    cmd = ['mdfind', '-onlyin', '/',
+    cmd = ['mdfind', '-onlyin', '/Applications',
+           '-onlyin', os.path.expanduser('~/Applications'),
            '(kMDItemContentTypeTree == com.apple.application &&'
            '(kMDItemDisplayName == "{0}" || kMDItemFSName == "{0}.app"))'
            .format(name)]
 
-    path = run_command(cmd).strip()
-    if not path:
+    output = run_command(cmd).strip()
+    if not output:
         return None
+
+    path = output.split('\n')[0]
 
     cmd = ['mdls', '-raw', '-name', 'kMDItemCFBundleIdentifier', path]
     bid = run_command(cmd).strip()
