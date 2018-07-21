@@ -40,8 +40,9 @@ from workflow.util import appinfo, run_command
 
 log = None
 
-ICON_CONNECTED = 'icons/connected.png'
-ICON_DISCONNECTED = 'icons/disconnected.png'
+ICON_CONNECTED = 'icons/locked.png'
+ICON_DISCONNECTED = 'icons/unlocked.png'
+ICON_CONFIG = 'icons/config.png'
 ICON_DOCS = 'icons/docs.png'
 ICON_HELP = 'icons/help.png'
 ICON_ISSUE = 'icons/issue.png'
