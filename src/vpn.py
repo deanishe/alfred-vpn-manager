@@ -8,12 +8,13 @@
 # Created on 2015-09-01
 #
 
-"""vpn.py (list|connect|disconnect) [<query>] [<name>]
+"""vpn.py (list|connect|disconnect|app) [<query>] [<name>]
 
 Usage:
     vpn.py list [<query>]
     vpn.py connect [-a|--all] [<name>]
     vpn.py disconnect [-a|--all] [<name>]
+    vpn.py app <name>
     vpn.py conf [<query>]
     vpn.py -h
 
@@ -180,7 +181,7 @@ class Viscosity(VPNApp):
     def program(self):
         """Command for viscosity.js script."""
         return ['/usr/bin/osascript', '-l', 'JavaScript',
-                wf.workflowfile('viscosity.js')]
+                wf.workflowfile('scripts/viscosity.js')]
 
     @property
     def download_url(self):
@@ -215,7 +216,7 @@ class Tunnelblick(VPNApp):
     def program(self):
         """Command for tunnelblick.applescript."""
         return ['/usr/bin/osascript',
-                wf.workflowfile('tunnelblick.applescript')]
+                wf.workflowfile('scripts/tunnelblick.applescript')]
 
     @property
     def download_url(self):
@@ -248,22 +249,6 @@ class Tunnelblick(VPNApp):
         """Close all active VPNs."""
         cmd = self.program + ['disconnect-all']
         run_command(cmd)
-
-
-# class Dummy(VPNApp):
-#     """Do-nothing application for testing."""
-
-#     @property
-#     def program(self):
-#         return ['/usr/bin/true']
-
-#     @property
-#     def download_url(self):
-#         return 'https://www.google.com'
-
-#     @property
-#     def connections(self):
-#         return []
 
 
 def get_app():
@@ -510,6 +495,11 @@ def do_disconnect(name):
     app.disconnect(name)
 
 
+def do_app(name):
+    """Set VPN client application."""
+    wf.setvar('VPN_APP', name, persist=True)
+
+
 #          dP oo
 #          88
 # .d8888b. 88 dP
@@ -534,6 +524,9 @@ def main(wf):
 
     elif args['conf']:
         return do_config(args.get('<query>'))
+
+    elif args['app']:
+        return do_app(args.get('<name>'))
 
     else:
         raise ValueError('unknown action')

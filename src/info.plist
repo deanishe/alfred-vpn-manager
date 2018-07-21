@@ -19,6 +19,19 @@
 				<false/>
 			</dict>
 		</array>
+		<key>866C8BD5-B0A1-48CB-AD45-138BD0BD3F0C</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>B84012A0-E647-44DC-BC60-07B2E545ECDA</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
 		<key>8BD0909C-70CA-44EC-BC40-1AAE4D5924D2</key>
 		<array>
 			<dict>
@@ -45,6 +58,8 @@
 				<false/>
 			</dict>
 		</array>
+		<key>B4C1BF71-F959-4077-A780-B07F070F125F</key>
+		<array/>
 		<key>B84012A0-E647-44DC-BC60-07B2E545ECDA</key>
 		<array>
 			<dict>
@@ -72,7 +87,17 @@
 		<array>
 			<dict>
 				<key>destinationuid</key>
-				<string>F216B61E-ED5A-49CE-BDB4-1C81A21588B0</string>
+				<string>87A3E9DC-F72A-4DD4-891A-A175CCBDBE4C</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>B4C1BF71-F959-4077-A780-B07F070F125F</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -141,7 +166,7 @@
 				<key>runningsubtext</key>
 				<string>Loading VPN information…</string>
 				<key>script</key>
-				<string>./vpn.py list "$1"</string>
+				<string>/usr/bin/python vpn.py list "$1"</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
@@ -188,7 +213,7 @@
 				<key>runningsubtext</key>
 				<string>Loading apps…</string>
 				<key>script</key>
-				<string>./vpn.py conf "$1"</string>
+				<string>/usr/bin/python vpn.py conf "$1"</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
@@ -208,6 +233,40 @@
 			<string>B84012A0-E647-44DC-BC60-07B2E545ECDA</string>
 			<key>version</key>
 			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>triggerid</key>
+				<string>config</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.trigger.external</string>
+			<key>uid</key>
+			<string>866C8BD5-B0A1-48CB-AD45-138BD0BD3F0C</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>lastpathcomponent</key>
+				<false/>
+				<key>onlyshowifquerypopulated</key>
+				<true/>
+				<key>removeextension</key>
+				<false/>
+				<key>text</key>
+				<string>Using {query}</string>
+				<key>title</key>
+				<string>Changed VPN App</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.notification</string>
+			<key>uid</key>
+			<string>87A3E9DC-F72A-4DD4-891A-A175CCBDBE4C</string>
+			<key>version</key>
+			<integer>1</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -250,36 +309,16 @@
 		<dict>
 			<key>config</key>
 			<dict>
-				<key>lastpathcomponent</key>
-				<false/>
-				<key>onlyshowifquerypopulated</key>
-				<false/>
-				<key>removeextension</key>
-				<false/>
-				<key>text</key>
-				<string>Using {query}</string>
-				<key>title</key>
-				<string>Changed VPN Application</string>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.output.notification</string>
-			<key>uid</key>
-			<string>F216B61E-ED5A-49CE-BDB4-1C81A21588B0</string>
-			<key>version</key>
-			<integer>1</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
 				<key>concurrently</key>
 				<false/>
 				<key>escaping</key>
 				<integer>102</integer>
 				<key>script</key>
 				<string>query="$1"
+echo "query=$query" &gt;&amp;2
 app=$( echo "$query" | cut -d: -f2 )
 
-/usr/libexec/PlistBuddy -c "Set :variables:VPN_APP \"$app\"" info.plist
+/usr/bin/python vpn.py app "$app"
 
 echo "$app"</string>
 				<key>scriptargtype</key>
@@ -295,6 +334,25 @@ echo "$app"</string>
 			<string>E4BFC069-A39C-4776-9DA8-546B7F8DB78F</string>
 			<key>version</key>
 			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>externaltriggerid</key>
+				<string>config</string>
+				<key>passinputasargument</key>
+				<false/>
+				<key>passvariables</key>
+				<false/>
+				<key>workflowbundleid</key>
+				<string>self</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.callexternaltrigger</string>
+			<key>uid</key>
+			<string>B4C1BF71-F959-4077-A780-B07F070F125F</string>
+			<key>version</key>
+			<integer>1</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -344,6 +402,20 @@ or Tunnelblick app from https://tunnelblick.net/</string>
 			<key>ypos</key>
 			<integer>50</integer>
 		</dict>
+		<key>866C8BD5-B0A1-48CB-AD45-138BD0BD3F0C</key>
+		<dict>
+			<key>xpos</key>
+			<integer>40</integer>
+			<key>ypos</key>
+			<integer>240</integer>
+		</dict>
+		<key>87A3E9DC-F72A-4DD4-891A-A175CCBDBE4C</key>
+		<dict>
+			<key>xpos</key>
+			<integer>870</integer>
+			<key>ypos</key>
+			<integer>240</integer>
+		</dict>
 		<key>8BD0909C-70CA-44EC-BC40-1AAE4D5924D2</key>
 		<dict>
 			<key>note</key>
@@ -361,6 +433,13 @@ or Tunnelblick app from https://tunnelblick.net/</string>
 			<integer>520</integer>
 			<key>ypos</key>
 			<integer>430</integer>
+		</dict>
+		<key>B4C1BF71-F959-4077-A780-B07F070F125F</key>
+		<dict>
+			<key>xpos</key>
+			<integer>870</integer>
+			<key>ypos</key>
+			<integer>400</integer>
 		</dict>
 		<key>B84012A0-E647-44DC-BC60-07B2E545ECDA</key>
 		<dict>
@@ -387,21 +466,18 @@ or Tunnelblick app from https://tunnelblick.net/</string>
 			<key>ypos</key>
 			<integer>400</integer>
 		</dict>
-		<key>F216B61E-ED5A-49CE-BDB4-1C81A21588B0</key>
-		<dict>
-			<key>xpos</key>
-			<integer>820</integer>
-			<key>ypos</key>
-			<integer>400</integer>
-		</dict>
 	</dict>
 	<key>variables</key>
 	<dict>
 		<key>VPN_APP</key>
-		<string>Viscosity</string>
+		<string></string>
 	</dict>
+	<key>variablesdontexport</key>
+	<array>
+		<string>VPN_APP</string>
+	</array>
 	<key>version</key>
-	<string>3.0.3</string>
+	<string>3.1</string>
 	<key>webaddress</key>
 	<string>https://github.com/deanishe/alfred-vpn-manager</string>
 </dict>
