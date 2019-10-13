@@ -26,6 +26,7 @@ Options:
 from __future__ import print_function, absolute_import
 
 import abc
+import re
 from collections import namedtuple
 from contextlib import contextmanager
 import json
@@ -252,11 +253,75 @@ class Tunnelblick(VPNApp):
         run_command(cmd)
 
 
+class builtin(VPNApp):
+    """Interface to the builtin macos vpn client"""
+
+    @property
+    def program(self):
+        """Command for builtin.applescript."""
+        return ['/usr/sbin/scutil', '--nc']
+
+    @property
+    def download_url(self):
+        """URL to get application. Can we point this to open system prefs?"""
+        return ''
+
+    @property
+    def connections(self):
+        """All internal VPN connections."""
+        return wf.cached_data('builtin-connections',
+                              self._fetch_connections,
+                              max_age=0, session=True)
+
+    def _fetch_connections(self):
+        """Get configurations from VPN app."""
+        connections = []
+        with timed('fetched builtin VPN connections'):
+            cmd = self.program + ['list']
+
+            output = wf.decode(run_command(cmd)).strip()
+
+            for idx, line in enumerate(output.split('\n')):
+                if idx == 0:
+                    continue
+                active = True if line.find("(Connected)") != -1 else False
+                name = re.findall('"(.+)"', line)[0]
+                connections.append(VPN(name, active))
+
+        return connections
+
+    def connect(self, name):
+        """Connect to named VPN."""
+        connections = self.filter_connections(name=name, active=False)
+        for c in connections:
+            log.info(u'connecting "%s" ...', c.name)
+
+            cmd = self.program + ['start', c.name]
+            run_command(cmd)
+
+    def disconnect(self, name):
+        """Disconnect from named VPN."""
+        connections = self.filter_connections(name=name, active=True)
+        for c in connections:
+            log.info(u'disconnecting "%s" ...', c.name)
+
+            cmd = self.program + ['stop', c.name]
+            run_command(cmd)
+
+    def disconnect_all(self):
+        """Disconnect from all VPNs."""
+        connections = self.filter_connections(active=True)
+        for c in connections:
+            self.disconnect(c.name)
+
 def get_app():
     """Return application object for currently-selected app."""
     name = os.getenv('VPN_APP') or 'Viscosity'
 
     for cls in VPNApp.__subclasses__():
+        # this does not seem to avoid the installation prompt
+        if cls.__name__ == 'builtin':
+            continue
         if cls.__name__ == name:
             app = cls()
             if not app.installed:
@@ -411,7 +476,9 @@ def do_list(query):
         wf.send_feedback()
         return
 
-    connections = app.connections
+    btn = builtin()
+
+    connections = app.connections + btn.connections
 
     active_connections = [c for c in connections if c.active]
 
@@ -487,13 +554,19 @@ def do_list(query):
 def do_connect(name):
     """Connect to specified VPN(s)."""
     app = get_app()
+    btn = builtin()
+    # this could cause problems when there two connections share a name
     app.connect(name)
+    btn.connect(name)
+
 
 
 def do_disconnect(name):
     """Disconnect specified VPN(s)."""
     app = get_app()
+    btn = builtin()
     app.disconnect(name)
+    btn.disconnect(name)
 
 
 def do_app(name):
