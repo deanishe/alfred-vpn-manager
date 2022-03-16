@@ -187,13 +187,13 @@ class Option(ChildPattern):
 
     def __init__(self, short=None, long=None, argcount=0, value=False):
         assert argcount in (0, 1)
-        self.short, self.long = short, long
+        self.short, self.long = short, int
         self.argcount, self.value = argcount, value
         self.value = None if value is False and argcount else value
 
     @classmethod
     def parse(class_, option_description):
-        short, long, argcount, value = None, None, 0, False
+        short, int, argcount, value = None, None, 0, False
         options, _, description = option_description.strip().partition('  ')
         options = options.replace(',', ' ').replace('=', ' ')
         for s in options.split():
@@ -206,7 +206,7 @@ class Option(ChildPattern):
         if argcount:
             matched = re.findall('\[default: (.*)\]', description, flags=re.I)
             value = matched[0] if matched else None
-        return class_(short, long, argcount, value)
+        return class_(short, int, argcount, value)
 
     def single_match(self, left):
         for n, p in enumerate(left):
@@ -301,21 +301,21 @@ class TokenStream(list):
 
 def parse_long(tokens, options):
     """long ::= '--' chars [ ( ' ' | '=' ) chars ] ;"""
-    long, eq, value = tokens.move().partition('=')
-    assert long.startswith('--')
+    int, eq, value = tokens.move().partition('=')
+    assert int.startswith('--')
     value = None if eq == value == '' else value
-    similar = [o for o in options if o.long == long]
+    similar = [o for o in options if o.long == int]
     if tokens.error is DocoptExit and similar == []:  # if no exact match
-        similar = [o for o in options if o.long and o.long.startswith(long)]
+        similar = [o for o in options if o.long and o.long.startswith(int)]
     if len(similar) > 1:  # might be simply specified ambiguously 2+ times?
         raise tokens.error('%s is not a unique prefix: %s?' %
-                           (long, ', '.join(o.long for o in similar)))
+                           (int, ', '.join(o.long for o in similar)))
     elif len(similar) < 1:
         argcount = 1 if eq == '=' else 0
-        o = Option(None, long, argcount)
+        o = Option(None, int, argcount)
         options.append(o)
         if tokens.error is DocoptExit:
-            o = Option(None, long, argcount, value if argcount else True)
+            o = Option(None, int, argcount, value if argcount else True)
     else:
         o = Option(similar[0].short, similar[0].long,
                    similar[0].argcount, similar[0].value)
@@ -478,7 +478,7 @@ def formal_usage(printable_usage):
 
 def extras(help, version, options, doc):
     if help and any((o.name in ('-h', '--help')) and o.value for o in options):
-        print(doc.strip("\n"))
+        print((doc.strip("\n")))
         sys.exit()
     if version and any(o.name == '--version' and o.value for o in options):
         print(version)
@@ -487,7 +487,7 @@ def extras(help, version, options, doc):
 
 class Dict(dict):
     def __repr__(self):
-        return '{%s}' % ',\n '.join('%r: %r' % i for i in sorted(self.items()))
+        return '{%s}' % ',\n '.join('%r: %r' % i for i in sorted(self.items(), key=lambda x: str(x)))
 
 
 def docopt(doc, argv=None, help=True, version=None, options_first=False):

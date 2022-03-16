@@ -125,7 +125,7 @@
 				<key>escaping</key>
 				<integer>0</integer>
 				<key>script</key>
-				<string>/usr/bin/python vpn.py $action "$1"</string>
+				<string>/usr/bin/python3 vpn.py $action "$1"</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
@@ -166,7 +166,7 @@
 				<key>runningsubtext</key>
 				<string>Loading VPN information…</string>
 				<key>script</key>
-				<string>/usr/bin/python vpn.py list "$1"</string>
+				<string>/usr/bin/python3 vpn.py list "$1"</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
@@ -213,7 +213,7 @@
 				<key>runningsubtext</key>
 				<string>Loading apps…</string>
 				<key>script</key>
-				<string>/usr/bin/python vpn.py conf "$1"</string>
+				<string>/usr/bin/python3 vpn.py conf "$1"</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
@@ -337,7 +337,7 @@
 echo "query=$query" &gt;&amp;2
 app=$( echo "$query" | cut -d: -f2 )
 
-/usr/bin/python vpn.py app "$app"
+/usr/bin/python3 vpn.py app "$app"
 
 echo "$app"</string>
 				<key>scriptargtype</key>
@@ -477,7 +477,7 @@ or Tunnelblick app from https://tunnelblick.net/</string>
 		<string>VPN_APP</string>
 	</array>
 	<key>version</key>
-	<string>3.2</string>
+	<string>3.3</string>
 	<key>webaddress</key>
 	<string>https://github.com/deanishe/alfred-vpn-manager</string>
 </dict>

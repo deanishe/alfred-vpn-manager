@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # encoding: utf-8
 #
 # Copyright (c) 2015 deanishe@deanishe.net
@@ -23,7 +23,7 @@ Options:
     -h, --help  Show this message and exit.
 """
 
-from __future__ import print_function, absolute_import
+
 
 import abc
 from collections import namedtuple
@@ -92,10 +92,8 @@ def timed(name=None):
 #          88                            88       88
 #          dP                            dP       dP
 
-class VPNApp(object):
+class VPNApp(object, metaclass=abc.ABCMeta):
     """Base class for application classes."""
-
-    __metaclass__ = abc.ABCMeta
 
     def __init__(self):
         """Create new initialised `VPNApp`."""
@@ -142,7 +140,7 @@ class VPNApp(object):
         """Connect to named VPN."""
         connections = self.filter_connections(name=name, active=False)
         for c in connections:
-            log.info(u'connecting "%s" ...', c.name)
+            log.info('connecting "%s" ...', c.name)
 
             cmd = self.program + ['connect', c.name]
             run_command(cmd)
@@ -151,7 +149,7 @@ class VPNApp(object):
         """Disconnect from named VPN."""
         connections = self.filter_connections(name=name, active=True)
         for c in connections:
-            log.info(u'disconnecting "%s" ...', c.name)
+            log.info('disconnecting "%s" ...', c.name)
 
             cmd = self.program + ['disconnect', c.name]
             run_command(cmd)
@@ -204,7 +202,7 @@ class Viscosity(VPNApp):
 
             data = json.loads(run_command(cmd))
 
-            for t in data.items():
+            for t in list(data.items()):
                 connections.append(VPN(*t))
 
         return connections
@@ -291,7 +289,7 @@ def show_update():
     """Add an 'update available!' item."""
     if wf.update_available:
         wf.add_item('Workflow Update Available!',
-                    u'↩ or ⇥ to install update',
+                    '↩ or ⇥ to install update',
                     autocomplete='workflow:update',
                     valid=False,
                     icon=ICON_UPDATE_AVAILABLE)
@@ -314,7 +312,7 @@ def do_config(query):
 
     items.append(dict(
         title=title,
-        subtitle=u'↩ or ⇥ to install update',
+        subtitle='↩ or ⇥ to install update',
         autocomplete='workflow:update',
         valid=False,
         icon=icon,
@@ -325,8 +323,8 @@ def do_config(query):
     for app in get_all_apps():
         if app.selected and app.installed:
             items.append(dict(
-                title=u'{} (active)'.format(app.name),
-                subtitle=u'{} is the active application'.format(app.name),
+                title='{} (active)'.format(app.name),
+                subtitle='{} is the active application'.format(app.name),
                 icon=app.info.path,
                 icontype='fileicon',
                 valid=False,
@@ -334,8 +332,8 @@ def do_config(query):
         else:
             if app.installed:
                 items.append(dict(
-                    title=u'{}'.format(app.name),
-                    subtitle=u'↩ to use {}'.format(app.name),
+                    title='{}'.format(app.name),
+                    subtitle='↩ to use {}'.format(app.name),
                     icon=app.info.path,
                     icontype='fileicon',
                     arg='app:' + app.name,
@@ -343,8 +341,8 @@ def do_config(query):
                 ))
             else:
                 items.append(dict(
-                    title=u'{} (not installed)'.format(app.name),
-                    subtitle=u'↩ to get {}'.format(app.name),
+                    title='{} (not installed)'.format(app.name),
+                    subtitle='↩ to get {}'.format(app.name),
                     icon=ICON_WEB,
                     arg=app.download_url,
                     valid=True,
@@ -404,7 +402,7 @@ def do_list(query):
     try:
         app = get_app()
     except NotInstalled as err:
-        wf.add_item(err.message,
+        wf.add_item(str(err),
                     'Use "vpnconf" to change the application',
                     valid=False,
                     icon=ICON_WARNING)
@@ -473,7 +471,7 @@ def do_list(query):
 
         it = wf.add_item(
             con.name,
-            u'↩ to connect',
+            '↩ to connect',
             uid=uid,
             arg=con.name,
             valid=True,
@@ -512,7 +510,7 @@ def main(wf):
     """Run workflow."""
     args = docopt.docopt(__doc__, wf.args, version=wf.version)
 
-    log.debug('args : %r', args)
+    log.debug('args : !r', args)
 
     if args['list']:
         return do_list(args.get('<query>'))
