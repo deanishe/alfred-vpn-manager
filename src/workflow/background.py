@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # encoding: utf-8
 #
 # Copyright (c) 2014 deanishe@deanishe.net
@@ -17,7 +17,7 @@ See :ref:`the User Manual <background-processes>` for more information
 and examples.
 """
 
-from __future__ import print_function, unicode_literals
+
 
 import signal
 import sys
@@ -25,7 +25,7 @@ import os
 import subprocess
 import pickle
 
-from workflow import Workflow
+from .workflow import Workflow
 
 __all__ = ['is_running', 'run_in_background']
 
@@ -96,7 +96,7 @@ def _job_pid(name):
     if not os.path.exists(pidfile):
         return
 
-    with open(pidfile, 'rb') as fp:
+    with open(pidfile, 'r') as fp:
         pid = int(fp.read())
 
         if _process_exists(pid):
@@ -143,7 +143,7 @@ def _background(pidfile, stdin='/dev/null', stdout='/dev/null',
             if pid > 0:
                 if write:  # write PID of child process to `pidfile`
                     tmp = pidfile + '.tmp'
-                    with open(tmp, 'wb') as fp:
+                    with open(tmp, 'w') as fp:
                         fp.write(str(pid))
                     os.rename(tmp, pidfile)
                 if wait:  # wait for child process to exit
@@ -233,7 +233,7 @@ def run_in_background(name, args, **kwargs):
         _log().debug('[%s] command cached: %s', name, argcache)
 
     # Call this script
-    cmd = ['/usr/bin/python', __file__, name]
+    cmd = ['/usr/bin/python3', __file__, name]
     _log().debug('[%s] passing job to background runner: %r', name, cmd)
     retcode = subprocess.call(cmd)
 

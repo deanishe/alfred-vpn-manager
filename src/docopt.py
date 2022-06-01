@@ -478,7 +478,7 @@ def formal_usage(printable_usage):
 
 def extras(help, version, options, doc):
     if help and any((o.name in ('-h', '--help')) and o.value for o in options):
-        print(doc.strip("\n"))
+        print((doc.strip("\n")))
         sys.exit()
     if version and any(o.name == '--version' and o.value for o in options):
         print(version)
@@ -487,7 +487,7 @@ def extras(help, version, options, doc):
 
 class Dict(dict):
     def __repr__(self):
-        return '{%s}' % ',\n '.join('%r: %r' % i for i in sorted(self.items()))
+        return '{%s}' % ',\n '.join('%r: %r' % i for i in sorted(self.items(), key=lambda x: str(x)))
 
 
 def docopt(doc, argv=None, help=True, version=None, options_first=False):

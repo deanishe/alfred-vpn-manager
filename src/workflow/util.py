@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # encoding: utf-8
 #
 # Copyright (c) 2017 Dean Jackson <deanishe@deanishe.net>
@@ -10,7 +10,7 @@
 
 """A selection of helper functions useful for building workflows."""
 
-from __future__ import print_function, absolute_import
+
 
 import atexit
 from collections import namedtuple
@@ -86,9 +86,9 @@ def jxa_app_name():
     """
     if os.getenv('alfred_version', '').startswith('3'):
         # Alfred 3
-        return u'Alfred 3'
+        return 'Alfred 3'
     # Alfred 4+
-    return u'com.runningwithcrayons.Alfred'
+    return 'com.runningwithcrayons.Alfred'
 
 
 def unicodify(s, encoding='utf-8', norm=None):
@@ -108,8 +108,8 @@ def unicodify(s, encoding='utf-8', norm=None):
         unicode: Decoded, optionally normalised, Unicode string.
 
     """
-    if not isinstance(s, unicode):
-        s = unicode(s, encoding)
+    if not isinstance(s, str):
+        s = str(s, encoding)
 
     if norm:
         from unicodedata import normalize
@@ -136,7 +136,7 @@ def utf8ify(s):
     if isinstance(s, str):
         return s
 
-    if isinstance(s, unicode):
+    if isinstance(s, str):
         return s.encode('utf-8')
 
     return str(s)
@@ -161,7 +161,7 @@ def applescriptify(s):
         unicode: Escaped string
 
     """
-    return s.replace(u'"', u'" & quote & "')
+    return s.replace('"', '" & quote & "')
 
 
 def run_command(cmd, **kwargs):
@@ -181,7 +181,7 @@ def run_command(cmd, **kwargs):
 
     """
     cmd = [utf8ify(s) for s in cmd]
-    return subprocess.check_output(cmd, **kwargs)
+    return subprocess.check_output(cmd, **kwargs).decode('utf8', errors='ignore')
 
 
 def run_applescript(script, *args, **kwargs):
@@ -383,7 +383,7 @@ class LockFile(object):
 
     >>> path = '/path/to/file'
     >>> with LockFile(path):
-    >>>     with open(path, 'wb') as fp:
+    >>>     with open(path, 'w') as fp:
     >>>         fp.write(data)
 
     Args:

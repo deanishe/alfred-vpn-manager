@@ -23,7 +23,7 @@ of them, and they won't be sent to Alfred when you call
 
 """
 
-from __future__ import print_function, unicode_literals, absolute_import
+
 
 import json
 import os
@@ -72,7 +72,7 @@ class Variables(dict):
         o = {}
         if self:
             d2 = {}
-            for k, v in self.items():
+            for k, v in list(self.items()):
                 d2[k] = v
             o['variables'] = d2
 
@@ -95,7 +95,7 @@ class Variables(dict):
             if self.arg:
                 return self.arg
             else:
-                return u''
+                return ''
 
         return json.dumps(self.obj)
 
@@ -106,7 +106,7 @@ class Variables(dict):
             str: UTF-8 encoded ``alfredworkflow`` JSON object
 
         """
-        return unicode(self).encode('utf-8')
+        return str(self)
 
 
 class Modifier(object):
@@ -438,7 +438,7 @@ class Item3(object):
         """
         if self.modifiers:
             mods = {}
-            for k, mod in self.modifiers.items():
+            for k, mod in list(self.modifiers.items()):
                 mods[k] = mod.obj
 
             return mods
@@ -689,7 +689,7 @@ class Workflow3(Workflow):
             o['rerun'] = self.rerun
         return o
 
-    def warn_empty(self, title, subtitle=u'', icon=None):
+    def warn_empty(self, title, subtitle='', icon=None):
         """Add a warning to feedback if there are no items.
 
         .. versionadded:: 1.31
